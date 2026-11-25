@@ -139,8 +139,8 @@
       var panel = latestForCode(observations, "85354-9");
       var systolic = panel && latestComponent(panel, "8480-6");
       var diastolic = panel && latestComponent(panel, "8462-4");
-      if (!systolic) { systolic = latestForCode(observations, "8480-6"); }
-      if (!diastolic) { diastolic = latestForCode(observations, "8462-4"); }
+      if (!hasQuantityValue(systolic)) { systolic = latestForCode(observations, "8480-6"); }
+      if (!hasQuantityValue(diastolic)) { diastolic = latestForCode(observations, "8462-4"); }
       var hdl = latestForCode(observations, "2085-9");
       var ldl = latestForCode(observations, "13457-7");
 
@@ -166,6 +166,13 @@
         var codings = component.code && Array.isArray(component.code.coding) ? component.code.coding : [];
         return codings.some(function (coding) { return coding.code === code; });
       })[0] || null;
+    }
+
+    // Checks whether a component or Observation contains a numeric valueQuantity.value.
+    // It reads valueQuantity.value; students should see separate readings used when a panel component is empty.
+    function hasQuantityValue(item) {
+      var quantity = item && item.valueQuantity;
+      return Boolean(quantity && quantity.value !== undefined && quantity.value !== null);
     }
 
     // Reads a result's LOINC code from its code.coding list.
